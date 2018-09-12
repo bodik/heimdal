@@ -65,6 +65,7 @@ struct kadm_func {
     kadm5_ret_t (*setkey_principal_3) (void *, krb5_principal, krb5_boolean,
 				       int, krb5_key_salt_tuple *,
 				       krb5_keyblock *, int);
+    kadm5_ret_t (*prune_principal) (void *, krb5_principal, int);
 };
 
 /* XXX should be integrated */
@@ -159,8 +160,9 @@ enum kadm_ops {
     kadm_get_princs,
     kadm_chpass_with_key,
     kadm_nop,
+    kadm_prune,
     kadm_first = kadm_get,
-    kadm_last = kadm_nop
+    kadm_last = kadm_prune
 };
 
 /* FIXME nop types are currently not implemented */
