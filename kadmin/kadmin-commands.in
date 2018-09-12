@@ -416,6 +416,13 @@ command = {
 	help = "Modifies some attributes of the specified principal."
 }
 command = {
+	name = "prune"
+	argument = "principal prunekvno"
+	min_args = "2"
+	max_args = "2"
+	help = "Delete keys from history by kvno."
+}
+command = {
 	name = "privileges"
 	name = "privs"
 	function = "get_privs"

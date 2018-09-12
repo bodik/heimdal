@@ -426,3 +426,10 @@ kadm5_free_policy_ent(kadm5_policy_ent_t ent)
     return 0;
 }
 
+kadm5_ret_t
+kadm5_prune_principal(void *server_handle,
+                      krb5_principal princ,
+                      int prunekvno)
+{
+    return __CALL(prune_principal, (server_handle, princ, prunekvno));
+}

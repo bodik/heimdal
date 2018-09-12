@@ -85,6 +85,9 @@ ${kadmin} -l add -p foo --use-defaults fez@${R} || exit 1
 ${kadmin} -l add -p foo --use-defaults hasalias@${R} || exit 1
 ${kadmin} -l add -p foo --use-defaults pkinit@${R} || exit 1
 ${kadmin} -l modify --pkinit-acl="CN=baz,DC=test,DC=h5l,DC=se" pkinit@${R} || exit 1
+${kadmin} -l add -p foo --use-defaults prune@${R} || exit 1
+${kadmin} -l cpw --keepold --random-key prune@${R} || exit 1
+${kadmin} -l cpw --keepold --random-key prune@${R} || exit 1
 
 echo foo > ${objdir}/foopassword
 
@@ -346,7 +349,33 @@ if test "`cat kadmin.tmp`" != "Attributes" ; then
 fi
 
 #----------------------------------
+${kadmind} -d &
+kadmpid=$!
+sleep 1
 
+echo "kadmin prune"
+env KRB5CCNAME=${cache} \
+${kadmin} prune prune@${R} 2 \
+        > kadmin.tmp 2>&1 || \
+        { echo "kadmin failed $?"; cat messages.log ; exit 1; }
+wait $kadmpid || { echo "kadmind failed $?"; cat messages.log ; exit 1; }
+
+${kadmind} -d &
+kadmpid=$!
+sleep 1
+
+env KRB5CCNAME=${cache} \
+${kadmin} get prune@${R} \
+        > kadmin.tmp 2>&1 || \
+        { echo "kadmin failed $?"; cat messages.log ; exit 1; }
+wait $kadmpid || { echo "kadmind failed $?"; cat messages.log ; exit 1; }
+
+cat kadmin.tmp | grep Keytypes: | sed 's/,/\n/g' | sed 's/.*\[//' | sed 's/\]//' | sort | uniq | tr '\n' ' ' > kadmin1.tmp
+if test "`cat kadmin1.tmp`" != "1 3 " ; then
+   cat messages.log ; exit 1 ;
+fi
+
+#----------------------------------
 
 echo "killing kdc (${kdcpid} ${kadmpid})"
 sh ${leaks_kill} kdc $kdcpid || exit 1

@@ -273,6 +273,43 @@ hdb_prune_keys(krb5_context context, hdb_entry *entry)
 }
 
 /**
+ * This function prunes an HDB entry's historic keys by kvno.
+ *
+ * @param context   Context
+ * @param entry	    HDB entry
+ */
+krb5_error_code
+hdb_prune_keys_kvno(krb5_context context, hdb_entry *entry, int prunekvno)
+{
+    HDB_extension *ext;
+    HDB_Ext_KeySet *keys;
+    size_t nelem;
+    hdb_keyset *elem;
+    size_t i;
+
+    ext = hdb_find_extension(entry, choice_HDB_extension_data_hist_keys);
+    if (ext == NULL)
+        return 0;
+    keys = &ext->data.u.hist_keys;
+    nelem = keys->len;
+
+    for(i = 0; i < nelem; /* see below */) {
+        elem = &keys->val[i];
+        if (elem->kvno == prunekvno) {
+            remove_HDB_Ext_KeySet(keys, i);
+            /*
+             * Removing the i'th element shifts the tail down, continue
+             * at same index with reduced upper bound.
+             */
+            --nelem;
+            continue;
+        }
+        i++;
+    }
+    return 0;
+}
+
+/**
  * This function adds an HDB entry's current keyset to the entry's key
  * history.  The current keyset is left alone; the caller is responsible
  * for freeing it.
