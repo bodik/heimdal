@@ -293,7 +293,7 @@ hdb_prune_keys_kvno(krb5_context context, hdb_entry *entry, int prunekvno)
     keys = &ext->data.u.hist_keys;
     nelem = keys->len;
 
-    for(i = 0; i < nelem; /* see below */) {
+    for (i = 0; i < nelem; /* see below */) {
         elem = &keys->val[i];
         if (elem->kvno == prunekvno) {
             remove_HDB_Ext_KeySet(keys, i);

@@ -23,20 +23,20 @@ prune_principal(void *server_handle,
     }
 
     ret = kadm5_log_init(context);
-    if(ret)
+    if (ret)
         goto out;
 
     ret = context->db->hdb_fetch_kvno(context->context, context->db, princ,
                                       HDB_F_GET_ANY|HDB_F_ADMIN_DATA, 0, &ent);
-    if(ret)
+    if (ret)
         goto out2;
 
     ret = hdb_prune_keys_kvno(context->context, &ent.entry, prunekvno);
-    if(ret)
+    if (ret)
         goto out3;
 
     ret = hdb_seal_keys(context->context, context->db, &ent.entry);
-    if(ret)
+    if (ret)
         goto out3;
 
     ret = kadm5_log_modify(context, &ent.entry, KADM5_KEY_DATA);
@@ -46,7 +46,7 @@ out3:
 out2:
     (void) kadm5_log_end(context);
 out:
-    if(!context->keep_open) {
+    if (!context->keep_open) {
         kadm5_ret_t ret2;
         ret2 = context->db->hdb_close(context->context, context->db);
         if (ret == 0 && ret2 != 0)

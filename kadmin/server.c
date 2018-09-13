@@ -252,17 +252,17 @@ kadmind_dispatch(void *kadm_handlep, krb5_boolean initial,
     case kadm_prune:{
         op = "PRUNE";
         ret = krb5_ret_principal(sp, &princ);
-        if(ret)
+        if (ret)
             goto fail;
         ret = krb5_ret_int32(sp, &prunekvno);
-        if(ret){
+        if (ret){
             krb5_free_principal(contextp->context, princ);
             goto fail;
         }
         krb5_unparse_name_fixed(contextp->context, princ, name, sizeof(name));
         krb5_warnx(contextp->context, "%s: %s %s", client, op, name);
         ret = _kadm5_acl_check_permission(contextp, KADM5_PRIV_CPW, princ);
-        if(ret){
+        if (ret){
             krb5_free_principal(contextp->context, princ);
             goto fail;
         }
