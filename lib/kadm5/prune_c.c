@@ -17,7 +17,7 @@ kadm5_c_prune_principal(void *server_handle, krb5_principal princ, int prunekvno
     krb5_data reply;
 
     ret = _kadm5_connect(server_handle);
-    if(ret)
+    if (ret)
         return ret;
 
     sp = krb5_storage_from_mem(buf, sizeof(buf));
@@ -36,7 +36,7 @@ kadm5_c_prune_principal(void *server_handle, krb5_principal princ, int prunekvno
     if (ret)
         return ret;
     sp = krb5_storage_from_data(&reply);
-    if(sp == NULL) {
+    if (sp == NULL) {
         krb5_clear_error_message(context->context);
         krb5_data_free(&reply);
         return ENOMEM;
