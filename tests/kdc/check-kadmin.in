@@ -370,10 +370,10 @@ ${kadmin} get prune@${R} \
         { echo "kadmin failed $?"; cat messages.log ; exit 1; }
 wait $kadmpid || { echo "kadmind failed $?"; cat messages.log ; exit 1; }
 
-cat kadmin.tmp | grep Keytypes: | sed 's/,/\n/g' | sed 's/.*\[//' | sed 's/\]//' | sort | uniq | tr '\n' ' ' > kadmin1.tmp
-if test "`cat kadmin1.tmp`" != "1 3 " ; then
-   cat messages.log ; exit 1 ;
-fi
+cat kadmin.tmp | ${EGREP} Keytypes: | cut -d: -f2 | tr ' ' '
+' | sed 's/^.*[[]\(.*\)[]].*$/\1/' | grep '[0-9]' | sort -nu | tr -d '
+' | ${EGREP} '^13$' > /dev/null || \
+        { echo "kadmin prune failed $?"; cat messages.log ; exit 1; }
 
 #----------------------------------
 
